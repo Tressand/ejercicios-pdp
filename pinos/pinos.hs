@@ -17,8 +17,11 @@ sirvePino alturaEnMetros= esPesoUtil (pesoPino alturaEnMetros)
 -- 4.
 costoTransporte :: Float -> Float
 costoTransporte alturaEnMetros | not (sirvePino alturaEnMetros) = error "El pino no sirve"
-                               | pesoPino alturaEnMetros <= 500 = 5000
+                               | pesoDelPino <= 500 = 5000
                                -- El rango (500, 600) no está definido por el enunciado 
-                               | 600 <= pesoPino alturaEnMetros && pesoPino alturaEnMetros < 800 = pesoPino alturaEnMetros * 10
-                               | pesoPino alturaEnMetros >= 800 = pesoPino alturaEnMetros * 10 + metroACentimetro alturaEnMetros
+                               | 600 <= pesoDelPino && pesoDelPino < 800 = pesoDelPino * 10
+                               | pesoDelPino >= 800 = pesoDelPino * 10 + alturaEnCentimetros
                                | otherwise = error "Coste del pino no especificado por la empresa de transporte"
+                               where
+                                pesoDelPino = pesoPino alturaEnMetros
+                                alturaEnCentimetros = metroACentimetro alturaEnMetros

@@ -11,6 +11,8 @@ esDivisible numero divisor = mod numero divisor == 0
 cantidadDeEmpleados :: String -> Int
 cantidadDeEmpleados "Acme" = 10
 cantidadDeEmpleados empresa | last empresa < head empresa = letrasIntermedias empresa
-                            | esCapicua empresa && even (length empresa) = letrasIntermedias empresa * 2
-                            | esDivisible (length empresa) 3 || esDivisible (length empresa) 7 = 3
+                            | esCapicua empresa && even cantLetras = letrasIntermedias empresa * 2
+                            | esDivisible cantLetras 3 || esDivisible cantLetras 7 = 3
                             | otherwise = 0
+                            where
+                              cantLetras = length empresa
