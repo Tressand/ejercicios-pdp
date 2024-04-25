@@ -2,7 +2,7 @@ data Hechicero = NuevoHechicero {
   nombre :: String,
   antiguedad :: Int,
   clan :: String,
-  grado :: Float
+  grado :: Int
 }
 
 nobara :: Hechicero
@@ -53,34 +53,24 @@ grupoCapaz grupo | esGrupoCapaz grupo = map subirDeGrado grupo
 esGrupoCapaz :: Equipo -> Bool
 esGrupoCapaz equipo = invencible equipo || equipoPreparado equipo
 
-type Criterio = (Hechicero -> Hechicero -> Hechicero)
-
-comparar :: String -> Criterio
-comparar "tryhard" = criterioTryhard
-comparar "burocratico" = criterioBurocratico
-comparar "intimidante" = criterioIntimidante
-comparar "sigilo" = criterioSigilo
-comparar x = error "Criterio invalido"
-
-criterioTryhard :: Criterio
-criterioTryhard opcionA opcionB | nivelTryhard opcionA > nivelTryhard opcionB = opcionA
-                                | nivelTryhard opcionA < nivelTryhard opcionB = opcionB
-                                | otherwise = error "Su nivel es el mismo, toca tirar moneda"
-
-nivelTryhard :: Hechicero -> Float
-nivelTryhard hechicero = 1 / (grado hechicero + 1)
-
-criterioBurocratico :: Criterio
-criterioBurocratico opcionA opcionB | length (clan opcionA) > length (clan opcionB) = opcionA
-                                    | length (clan opcionA) < length (clan opcionB) = opcionB
-                                    | otherwise = error "Su nivel es el mismo, toca tirar moneda"
-
-criterioIntimidante :: Criterio
-criterioIntimidante opcionA opcionB | maximum (clan opcionA) > maximum (clan opcionB) = opcionA
-                                    | maximum (clan opcionA) < maximum (clan opcionB) = opcionB
-                                    | otherwise = error "Su nivel es el mismo, toca tirar moneda"
-
-criterioSigilo :: Criterio
-criterioSigilo opcionA opcionB | antiguedad opcionA * 6 > antiguedad opcionB * 6 = opcionA
-                               | antiguedad opcionA * 6 < antiguedad opcionB * 6 = opcionB
+comparar :: Ord a => (Hechicero -> a) -> Hechicero -> Hechicero -> Hechicero
+comparar nivel opcionA opcionB | nivel opcionA > nivel opcionB = opcionA
+                               | nivel opcionA < nivel opcionB = opcionB
                                | otherwise = error "Su nivel es el mismo, toca tirar moneda"
+
+type Nivel = Hechicero -> Int
+
+nivelTryhard :: Nivel
+nivelTryhard hechicero = div 1 (grado hechicero + 1)
+
+nivelBurocratico :: Nivel
+nivelBurocratico = length . clan
+
+nivelIntimidante :: Nivel
+nivelIntimidante hechicero = obtenerASCII (maximum (nombre hechicero))
+
+obtenerASCII :: Char -> Int
+obtenerASCII = fromEnum
+
+nivelSigilo :: Nivel
+nivelSigilo = (*6) . antiguedad
